@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<title>Update Data</title>
+</head>
+<body>
+<form method="POST" enctype="multipart/form-data">
+      <button type="submit" name= "home" value="home_page" formmethod="POST">HOME</button> |
+      <button type="submit" name= "contact_us" value="contactus_page" formmethod="POST">CONTACT_US</button>
+</form>
+</body>
+<body>
+<h1>Update Employee</h1>
+<form method="POST" enctype="multipart/form-data">
+<div class="row">
+    <label class="required" for="name">Name:</label><br />
+    <input id="name" class="input" name="name_update" type="text" value="%s" size="30" /><br />
+  </div>
+  <div class="row">
+    <label class="required" for="tgid">TGID:</label><br />
+    <input id="tgid" class="input" name="tgid_update" type="text" value="%s" size="30" readonly/><br />
+  </div>
+  <div class="row">
+    <label class="required" for="contact">Contact:</label><br />
+    <input id="contact" class="input" name="contact_update" value="%s" size="30"/><br />
+  </div>
+  <button type="submit" name= "update_employee" value="update_user" formmethod="POST">UPDATE EMPLOYEE</button>
+</form>
+</body>
+</html>

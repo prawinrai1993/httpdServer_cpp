@@ -1,3 +1,10 @@
+/*
+ * Database.cpp
+ *
+ *  Created on: 10-Jun-2020
+ *      Author: praveen
+ */
+
 #include <iostream>
 #include <stdio.h>
 #include "database.h"
@@ -8,7 +15,7 @@ Database::Database()
 {
 
 
-
+	_database_buffer.clear();
 
 
 }
@@ -19,88 +26,108 @@ Database::~Database()
 }
 
 
-void Database::add_employee(employee data)
+void Database::add_employee(std::string key_value,employee data)
 {
-	_database_buffer.push_back(data);
+	employee copy_data;
+	strcpy(copy_data.contact,data.contact);
+	strcpy(copy_data.tgid,data.tgid);
+	strcpy(copy_data.name,data.name);
+	_database_buffer.insert({key_value,copy_data});
 
 }
 
-
-void Database::delete_employee(const char * data)
+void Database::delete_employee(std::string data)
 {
-	for(size_t i=0;i < _database_buffer.size();i++)
-	{
-		if(strcmp(data,_database_buffer.at(i).tgid)== 0)
-		{
-			_database_buffer.erase(_database_buffer.begin() + i);     /* remove at i*/
-			return;
-		}
 
+	std::map<std::string, employee>::iterator it;
+
+	it = _database_buffer.find(data);
+
+	if(it == _database_buffer.end())
+		 cout << "Key-value pair not present in map" ;
+	else
+	{
+	     _database_buffer.erase(it->first);
 	}
 
-	cout << "no data found....." << endl;
+
 
 }
 
 void Database::update_employee(const employee &data)
 {
+	std::map<std::string, employee>::iterator it;
 
-	for(size_t i=0;i < _database_buffer.size();i++)
+	it = _database_buffer.find(Tools::convertToString(data.tgid,strlen(data.tgid)));
+
+	if(it == _database_buffer.end())
+		cout << "TGID not present in database" ;
+	else
 	{
-		if(strcmp(data.tgid,_database_buffer.at(i).tgid)== 0)
-		{
-			strcpy(_database_buffer.at(i).name,data.name);         /* copy at i*/
-			strcpy(_database_buffer.at(i).contact,data.contact);   /* update contact*/
-			cout << "data updated" << endl;
-			return;
-		}
-
+		strcpy(it->second.contact,data.contact);
+		strcpy(it->second.name,data.name);
+		strcpy(it->second.tgid,data.tgid);
 	}
 
 }
 
-bool Database::get_empolyee_update(const char * find_data,employee &data)
+bool Database::get_empolyee_update(std::string find_data,employee &data)
 {
+	std::map<std::string, employee>::iterator it;
 
-	for(size_t i=0;i < _database_buffer.size();i++)
+	it = _database_buffer.find(find_data);
+
+	if(it == _database_buffer.end())
 	{
-		if(strcmp(find_data,_database_buffer.at(i).tgid)== 0)
-		{
-			data = _database_buffer[i];
-			return true;
-		}
+			cout << "TGID not present in database" ;
+			return false;
+	}
+	else
+	{
+		strcpy(data.contact,it->second.contact);
+		strcpy(data.name,it->second.name);
+		strcpy(data.tgid,it->second.tgid);
+		return true;
 	}
 
 	return false;
+
+
 }
 void Database::save_file()
 {
 
-	ofstream out(_file_path, ios::binary);
+	ofstream out(_file_path, ios::binary |std::ofstream::trunc);
 	if (!out)
 		return;
 
-	for(size_t i = 0; i < _database_buffer.size() ; i++)
-	{
 
-		// Write the size of the string.
-		int size =strlen(_database_buffer.at(i).tgid);
-		out.write(reinterpret_cast<char*>(&size), sizeof(int));
-		// writing data
-		out.write(_database_buffer.at(i).tgid, size);
+	for(std::map<std::string, employee>::iterator it = _database_buffer.begin(); it != _database_buffer.end(); it++) {
+				//Write the size of the string.
+				int size =strlen(it->first.c_str()) + 1;
+				out.write(reinterpret_cast<char *>(&size), sizeof(int));
+				// writing data
+				out.write(it->first.c_str(), size);
 
-		size =strlen(_database_buffer.at(i).name);
-		out.write(reinterpret_cast<char*>(&size), sizeof(int));
-		// writing data
-		out.write(_database_buffer.at(i).name, size);
+				//Write the size of the string.
+				size =strlen(it->second.tgid) + 1;
+				out.write(reinterpret_cast<char*>(&size), sizeof(int));
+				// writing data
+				out.write(it->second.tgid, size);
+
+				size =strlen(it->second.name) + 1;
+				out.write(reinterpret_cast<char*>(&size), sizeof(int));
+				// writing data
+				out.write(it->second.name, size);
 
 
-		size =strlen(_database_buffer.at(i).contact);
-		out.write(reinterpret_cast<char*>(&size), sizeof(int));
-		// writing data
-		out.write(_database_buffer.at(i).contact, size);
+				size =strlen(it->second.contact) + 1;
+				out.write(reinterpret_cast<char*>(&size), sizeof(int));
+				// writing data
+				out.write(it->second.contact, size);
 
-	}
+	        }
+	out.close();
 
 }
 
@@ -110,15 +137,25 @@ void Database::read_database()
 
 	_database_buffer.clear();						        // clear before reading data
 	ifstream in(_file_path, ios::binary);
-	if (!in)
+	if (!in | in.eof())
+	{
+		in.close();
 		return;
+	}
 
 	while(!in.eof())
 	{
 
 		// Read in the size of the string.
 		employee emp;
+		std::string key_value = "";
+		char temp_str[30];
 		int size = 0;
+		in.read(reinterpret_cast<char*>(&size), sizeof(int));
+		in.read(temp_str, size);
+		key_value = Tools::convertToString(temp_str,strlen(temp_str));
+
+		size = 0;
 		in.read(reinterpret_cast<char*>(&size), sizeof(int));
 		in.read(emp.tgid, size);
 
@@ -130,12 +167,14 @@ void Database::read_database()
 		in.read(reinterpret_cast<char*>(&size), sizeof(int));
 		in.read(emp.contact, size);
 
-		_database_buffer.push_back(emp);
+		_database_buffer.insert({key_value,emp});
 	}
+
+	in.close();
 
 }
 
-vector <employee > & Database::getDatabaseContent()
+std::map <std::string,employee > & Database::getDatabaseContent()
 {
 
 	return _database_buffer;

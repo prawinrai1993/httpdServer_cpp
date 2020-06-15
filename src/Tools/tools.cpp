@@ -1,3 +1,10 @@
+/*
+ * Tools.cpp
+ *
+ *  Created on: 10-Jun-2020
+ *      Author: praveen
+ */
+
 #include "tools.h"
 
 Tools::Tools()
@@ -73,4 +80,15 @@ void Tools::replaceAll(char *str, const char *oldWord, const char *newWord)
 
 
 
+}
+
+
+std::string Tools::convertToString(const char* a, int size)
+{
+	int i;
+	std::string s = "";
+	for (i = 0; i <= size; i++) {
+		s = s + a[i];
+	}
+	return s;
 }

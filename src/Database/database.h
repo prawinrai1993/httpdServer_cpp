@@ -1,16 +1,25 @@
-#ifndef DATABASE_H
-#define DATABASE_H
+/*
+ * Database.h
+ *
+ *  Created on: 10-Jun-2020
+ *      Author: praveen
+ */
+
+#ifndef DATABASE_H_
+#define DATABASE_H_
 
 #include "string.h"
 #include <vector>
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <iterator>
 #include <algorithm>
+#include <string>
+#include "tools.h"
 
-#define _file_path "../../employee.dat"
+#define _file_path "employee.dat"
 
-using namespace std;
 
 typedef struct {
 	char name[30];
@@ -21,19 +30,20 @@ typedef struct {
 class Database{
 
 	private:
-		vector<employee> _database_buffer;
+		std::map<std::string,employee> _database_buffer;
+
 
 	public: Database();
-		~Database();
-
-		void add_employee(employee data);
-		void delete_employee(const char * data);
+		virtual ~Database();
+		void add_employee(std::string key_value,employee data);
+		void delete_employee(std::string data);
 		void save_file();
 		void read_database();
-		vector <employee >& getDatabaseContent();
+	    std::map <std::string ,employee >& getDatabaseContent();
 		void update_employee(const employee &data);
-		bool get_empolyee_update(const char * find_data,employee &data);
+		bool get_empolyee_update(std::string find_data,employee &data);
 
 };
 
-#endif  /* database.h */
+
+#endif /* DATABASE_H_ */

@@ -1,6 +1,6 @@
-CXX      := -c++
+CXX      := g++
 
-CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror
+CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -std=c++11
 
 LDFLAGS  := -L/usr/lib -lstdc++ -lm \
 	    -L$(HOME)/lib  -lmicrohttpd\
@@ -13,8 +13,7 @@ APP_DIR  := $(BUILD)/apps
 
 TARGET   := httpd_server
 
-INCLUDE  :=-I/Include/\
-	-I$(HOME)/include/\
+INCLUDE  :=-I$(HOME)/include/\
 	-I src/Server/\
 	-I src/Tools/ \
 	-I src/Database/\

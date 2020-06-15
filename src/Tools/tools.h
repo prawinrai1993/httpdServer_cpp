@@ -1,5 +1,12 @@
-#ifndef TOOLS_H
-#define TOOLS_H
+/*
+ * Tools.h
+ *
+ *  Created on: 10-Jun-2020
+ *      Author: praveen
+ */
+
+#ifndef TOOLS_H_
+#define TOOLS_H_
 
 #include <iostream>
 #include <string.h>
@@ -9,17 +16,18 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <string>
 
 class Tools{
 
 	public:
 		Tools();
-		~Tools();
+		virtual ~Tools();
 		static int OSCopyFile(const char* source, const char* destination);
 		static void replaceAll(char *str, const char *oldWord, const char *newWord);
+		static std::string convertToString(const char* a, int size);
 
 
 };
 
-
-#endif    /* tools.h*/
+#endif /* TOOLS_H_ */

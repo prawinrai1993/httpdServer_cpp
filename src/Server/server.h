@@ -1,5 +1,12 @@
-#ifndef SERVER_H
-#define SERVER_H
+/*
+ * Server.h
+ *
+ *  Created on: 10-Jun-2020
+ *      Author: praveen
+ */
+
+#ifndef SERVER_H_
+#define SERVER_H_
 
 #include <iostream>
 #include <sys/types.h>
@@ -10,10 +17,12 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include "tools.h"
 #include "webpage_creator.h"
-#include "database.h"
 
-
+class Database;
+class Tools;
+class WebPage_Creator;
 using namespace std;
 
 #define PORT            8888
@@ -26,10 +35,6 @@ using namespace std;
 #define POST            1
 
 
-const char *errorpage =
-"<html><body><h1>page not found!!!<h1></body></html>";
-
-
 struct connection_info_struct
 {
 	int connectiontype;
@@ -40,16 +45,16 @@ struct connection_info_struct
 class Server{
 
 	public:Server();
-	       ~Server();
+	       virtual ~Server();
 	       int startServer();
 	       void stopServer();
 
 	       /* variables*/
 	private:
-	       struct MHD_Daemon *_daemon;
-		static Database _database;
-		static WebPage_Creator _webpage_creator;
-		static employee *_temp_storage;
+	    struct MHD_Daemon *_daemon;
+	    static Database _database;
+	    static WebPage_Creator _webpage_creator;
+		static employee _temp_storage;
 
 
 	       /* functions for server handling*/
@@ -72,5 +77,4 @@ class Server{
 
 };
 
-
-#endif		/* server.h */
+#endif /* SERVER_H_ */

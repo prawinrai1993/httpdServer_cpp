@@ -1,3 +1,10 @@
+/*
+ * main.cpp
+ *
+ *  Created on: 10-Jun-2020
+ *      Author: praveen
+ */
+
 #include <iostream>
 #include <stdio.h>
 #include "server.h"
@@ -5,17 +12,20 @@
 
 int main()
 {
-	
-    Server *server = new Server();	                // initialize
+
+    Server *server = new Server();                      // initialize
     int status = server->startServer();
 
-    if(status == 0)	// may return 0 incase demon not started
+    if(status == 0)     // may return 0 incase demon not started
     {
-	    cout << "server could not be started..." << endl;
-	    return 0;
+            cout << "server could not be started..." << endl;
+            return 0;
     }
-    (void) getchar ();			                /* do not allow program to exit*/
+    (void) getchar ();                                  /* do not allow program to exit*/
 
     server->stopServer();
+    return 0;
 }
+
+
 

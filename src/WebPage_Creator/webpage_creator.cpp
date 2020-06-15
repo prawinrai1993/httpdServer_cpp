@@ -88,6 +88,7 @@ void WebPage_Creator::updateDatabasePage()
 	/* Close all files to release resource */
 	fclose(fPtr);
 	fclose(fTemp);
+	free(newWord);
 
 
 	/* Delete original source file */

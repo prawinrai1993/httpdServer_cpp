@@ -93,8 +93,9 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			answerstring = (char*)malloc (MAXANSWERSIZE);
 			if (!answerstring)
 				return MHD_NO;
-
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(DATABASE_PAGE), data);
+			char * page_str = _webpage_creator.getPage(DATABASE_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -110,7 +111,9 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			answerstring = (char*)malloc (MAXANSWERSIZE);
 			if (!answerstring)
 				return MHD_NO;
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(CONTACTUS_PAGE), data);
+			char * page_str = _webpage_creator.getPage(CONTACTUS_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -126,7 +129,9 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			answerstring = (char *)malloc (MAXANSWERSIZE);
 			if (!answerstring)
 				return MHD_NO;
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(ADDUSER_PAGE), data);
+			char * page_str = _webpage_creator.getPage(ADDUSER_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -143,7 +148,9 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			answerstring = (char *)malloc (MAXANSWERSIZE);
 			if (!answerstring)
 				return MHD_NO;
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(DELETEUSER_PAGE), data);
+			char * page_str = _webpage_creator.getPage(DELETEUSER_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -159,7 +166,9 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			answerstring = (char *)malloc (MAXANSWERSIZE);
 			if (!answerstring)
 				return MHD_NO;
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(ASKUSER_PAGE), data);
+			char * page_str = _webpage_creator.getPage(ASKUSER_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -180,12 +189,16 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			employee check_data;
 			bool check = _database.get_empolyee_update(Tools::convertToString(data,strlen(data)),check_data);
 			if(check == false){
-				snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(DATABASE_PAGE), data);
+				char * page_str = _webpage_creator.getPage(DATABASE_PAGE);
+				strncpy(answerstring,page_str,MAXANSWERSIZE);
+				free(page_str);
 				con_info->answerstring = answerstring;
 			}
 			else
 			{
-				snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(UPDATEUSER_PAGE), check_data.name,check_data.tgid,check_data.contact);
+				char * page_str = _webpage_creator.getPage(UPDATEUSER_PAGE);
+				snprintf (answerstring, MAXANSWERSIZE, page_str, check_data.name,check_data.tgid,check_data.contact);
+				free(page_str);
 				con_info->answerstring = answerstring;
 			}
 
@@ -208,10 +221,14 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			_database.delete_employee(Tools::convertToString(data,strlen(data)));                                       // delete using key id
 			_database.save_file();
 			_database.read_database();                                             // read binary database file
+
 			_webpage_creator.write_database_table(_database.getDatabaseContent());                        // create temp table file
 			Tools::OSCopyFile(TEMPLATE_DATABASE_PAGE, TEMP_PAGE);                   // copy template to temp file, to be mofified
-			_webpage_creator.updateDatabasePage();                                                   // update database to webpage
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(DATABASE_PAGE), data);
+			_webpage_creator.updateDatabasePage();
+			// update database to webpage
+			char * page_str = _webpage_creator.getPage(DATABASE_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -260,7 +277,9 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			_webpage_creator.write_database_table(_database.getDatabaseContent());                     // create temp table file
 			Tools::OSCopyFile(TEMPLATE_DATABASE_PAGE, TEMP_PAGE);      // copy template to temp file, to be mofified
 			_webpage_creator.updateDatabasePage();                               // update database to webpage
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(DATABASE_PAGE), data);
+			char * page_str = _webpage_creator.getPage(DATABASE_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -308,7 +327,9 @@ int Server::iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char
 			_webpage_creator.write_database_table(_database.getDatabaseContent());                     // create temp table file
 			Tools::OSCopyFile(TEMPLATE_DATABASE_PAGE, TEMP_PAGE);      // copy template to temp file, to be mofified
 			_webpage_creator.updateDatabasePage();                               // update database to webpage
-			snprintf (answerstring, MAXANSWERSIZE, _webpage_creator.getPage(DATABASE_PAGE), data);
+			char * page_str = _webpage_creator.getPage(DATABASE_PAGE);
+			strncpy(answerstring,page_str,MAXANSWERSIZE);
+			free(page_str);
 			con_info->answerstring = answerstring;
 		}
 		else
@@ -357,6 +378,7 @@ int Server::answer_to_connection (void *cls, struct MHD_Connection *connection,
 	(void)cls;               /* Unused. Silent compiler warning. */
 	(void)url;               /* Unused. Silent compiler warning. */
 	(void)version;           /* Unused. Silent compiler warning. */
+	int ret;
 
 	if (NULL == *con_cls)
 	{
@@ -392,39 +414,42 @@ int Server::answer_to_connection (void *cls, struct MHD_Connection *connection,
 
 	if (0 == strcmp (method, "GET"))
 	{
-		char *user;
-		char *pass;
-		int fail;
-		int ret;
-		struct MHD_Response *response;
-		//basic authentication code
-		pass = NULL;
-		user = MHD_basic_auth_get_username_password (connection,
-				&pass);
-		fail = ( (NULL == user) ||
-				(0 != strcmp (user, "praveen")) ||
-				(0 != strcmp (pass, "password") ) );
-		if (NULL != user) MHD_free (user);
-		if (NULL != pass) MHD_free (pass);
-		if (fail)
-		{
-			const char *page = "<html><body>Go away.</body></html>";
-			response =
-					MHD_create_response_from_buffer (strlen (page), (void *) page,
-							MHD_RESPMEM_PERSISTENT);
-			ret = MHD_queue_basic_auth_fail_response (connection,
-					"my realm",
-					response);
-			return ret;
-		}
-		else
-		{
+//		char *user;
+//		char *pass;
+//		int fail;
+//		int ret;
+//		struct MHD_Response *response;
+//		//basic authentication code
+//		pass = NULL;
+//		user = MHD_basic_auth_get_username_password (connection,
+//				&pass);
+//		fail = ( (NULL == user) ||
+//				(0 != strcmp (user, "praveen")) ||
+//				(0 != strcmp (pass, "password") ) );
+//		if (NULL != user) MHD_free (user);
+//		if (NULL != pass) MHD_free (pass);
+//		if (fail)
+//		{
+//			const char *page = "<html><body>Go away.</body></html>";
+//			response =
+//					MHD_create_response_from_buffer (strlen (page), (void *) page,
+//							MHD_RESPMEM_PERSISTENT);
+//			ret = MHD_queue_basic_auth_fail_response (connection,
+//					"my realm",
+//					response);
+//			return ret;
+//		}
+//		else
+//		{
 			_database.read_database();                                             // read binary database file
 			_webpage_creator.write_database_table(_database.getDatabaseContent());                       // create temp table file
 			Tools::OSCopyFile(TEMPLATE_DATABASE_PAGE, TEMP_PAGE);                          // copy template to temp file, to be mofified
 			_webpage_creator.updateDatabasePage();                                 // update database to webpage
-			return send_page (connection, _webpage_creator.getPage(DATABASE_PAGE));
-		}
+			char * page_str = _webpage_creator.getPage(DATABASE_PAGE);
+			ret = send_page (connection, page_str);
+			free(page_str);
+			return ret;
+//		}
 
 	}
 
@@ -442,7 +467,6 @@ int Server::answer_to_connection (void *cls, struct MHD_Connection *connection,
 		}
 		else if (NULL != con_info->answerstring) {
 			return send_page (connection, con_info->answerstring);
-			return MHD_YES;
 		}
 	}
 

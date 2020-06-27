@@ -73,6 +73,8 @@ class Server{
 		size_t *upload_data_size, void **con_cls);
 
 	static int send_page (struct MHD_Connection *connection, const char *page);
+	static void ignore_sigpipe ();
+	static void catcher (int sig);
 
 
 };

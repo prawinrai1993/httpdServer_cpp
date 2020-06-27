@@ -28,6 +28,8 @@ int Server::startServer()
 			Server::answer_to_connection, NULL,
 			MHD_OPTION_NOTIFY_COMPLETED, &Server::request_completed,
 			NULL, MHD_OPTION_END);
+			
+	ignore_sigpipe();
 
 
 	if (NULL == _daemon)	/* returns null on failure of demon creation*/
@@ -47,6 +49,29 @@ void Server::stopServer()
 	MHD_stop_daemon (_daemon);
 	printf("server stopped......\n");
 
+}
+
+void Server::ignore_sigpipe ()
+{
+  struct sigaction oldsig;
+  struct sigaction sig;
+
+  sig.sa_handler = &catcher;
+  sigemptyset (&sig.sa_mask);
+#ifdef SA_INTERRUPT
+  sig.sa_flags = SA_INTERRUPT;  /* SunOS */
+#else
+  sig.sa_flags = SA_RESTART;
+#endif
+  if (0 != sigaction (SIGPIPE, &sig, &oldsig))
+    fprintf (stderr,
+             "Failed to install SIGPIPE handler: %s\n", strerror (errno));
+}
+
+void Server::catcher (int sig)
+{
+  (void) sig;  /* Unused. Silent compiler warning. */
+  /* do nothing */
 }
 
 int Server::send_page (struct MHD_Connection *connection, const char *page)
@@ -414,33 +439,33 @@ int Server::answer_to_connection (void *cls, struct MHD_Connection *connection,
 
 	if (0 == strcmp (method, "GET"))
 	{
-//		char *user;
-//		char *pass;
-//		int fail;
-//		int ret;
-//		struct MHD_Response *response;
-//		//basic authentication code
-//		pass = NULL;
-//		user = MHD_basic_auth_get_username_password (connection,
-//				&pass);
-//		fail = ( (NULL == user) ||
-//				(0 != strcmp (user, "praveen")) ||
-//				(0 != strcmp (pass, "password") ) );
-//		if (NULL != user) MHD_free (user);
-//		if (NULL != pass) MHD_free (pass);
-//		if (fail)
-//		{
-//			const char *page = "<html><body>Go away.</body></html>";
-//			response =
-//					MHD_create_response_from_buffer (strlen (page), (void *) page,
-//							MHD_RESPMEM_PERSISTENT);
-//			ret = MHD_queue_basic_auth_fail_response (connection,
-//					"my realm",
-//					response);
-//			return ret;
-//		}
-//		else
-//		{
+		char *user;
+		char *pass;
+		int fail;
+		int ret;
+		struct MHD_Response *response;
+		//basic authentication code
+		pass = NULL;
+		user = MHD_basic_auth_get_username_password (connection,
+				&pass);
+		fail = ( (NULL == user) ||
+				(0 != strcmp (user, "praveen")) ||
+				(0 != strcmp (pass, "password") ) );
+		if (NULL != user) MHD_free (user);
+		if (NULL != pass) MHD_free (pass);
+		if (fail)
+		{
+			const char *page = "<html><body>Go away.</body></html>";
+			response =
+					MHD_create_response_from_buffer (strlen (page), (void *) page,
+							MHD_RESPMEM_PERSISTENT);
+			ret = MHD_queue_basic_auth_fail_response (connection,
+					"my realm",
+					response);
+			return ret;
+		}
+		else
+		{
 			_database.read_database();                                             // read binary database file
 			_webpage_creator.write_database_table(_database.getDatabaseContent());                       // create temp table file
 			Tools::OSCopyFile(TEMPLATE_DATABASE_PAGE, TEMP_PAGE);                          // copy template to temp file, to be mofified
@@ -449,7 +474,7 @@ int Server::answer_to_connection (void *cls, struct MHD_Connection *connection,
 			ret = send_page (connection, page_str);
 			free(page_str);
 			return ret;
-//		}
+		}
 
 	}
 

@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include "tools.h"
 #include "webpage_creator.h"
+#include <signal.h>
 
 class Database;
 class Tools;

@@ -403,7 +403,6 @@ int Server::answer_to_connection (void *cls, struct MHD_Connection *connection,
 	(void)cls;               /* Unused. Silent compiler warning. */
 	(void)url;               /* Unused. Silent compiler warning. */
 	(void)version;           /* Unused. Silent compiler warning. */
-	int ret;
 
 	if (NULL == *con_cls)
 	{
